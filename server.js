@@ -1,5 +1,5 @@
 const express = require('express');
-const swaggerUi = require('swagger-ui-express');
+const path = require('path');
 const swaggerDocument = require('./swagger.json');
 
 const app = express();
@@ -11,22 +11,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// Swagger UI options
-const options = {
-  customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: 'SmartHome API Documentation',
-  swaggerOptions: {
-    url: '/swagger.json'
-  }
-};
-
-// Serve swagger.json
-app.get('/swagger.json', (req, res) => {
+// Serve swagger.json API
+app.get('/api/swagger.json', (req, res) => {
   res.json(swaggerDocument);
 });
 
-// Serve Swagger UI at root
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
+// Serve static files from public folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve index.html for root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // For local development
 if (process.env.NODE_ENV !== 'production') {
