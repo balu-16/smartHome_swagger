@@ -15,16 +15,25 @@ app.use((req, res, next) => {
 const options = {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'SmartHome API Documentation',
-  customfavIcon: '/favicon.ico'
+  swaggerOptions: {
+    url: '/swagger.json'
+  }
 };
+
+// Serve swagger.json
+app.get('/swagger.json', (req, res) => {
+  res.json(swaggerDocument);
+});
 
 // Serve Swagger UI at root
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
-const PORT = process.env.PORT || 3002;
-
-app.listen(PORT, () => {
-  console.log(`📚 Swagger Documentation running at http://localhost:${PORT}`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3002;
+  app.listen(PORT, () => {
+    console.log(`📚 Swagger Documentation running at http://localhost:${PORT}`);
+  });
+}
 
 module.exports = app;
