@@ -38,9 +38,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["phone_number"],
+                "required": ["phoneNumber"],
                 "properties": {
-                  "phone_number": { "type": "string", "example": "9876543210" }
+                  "phoneNumber": { "type": "string", "example": "9876543210" },
+                  "name": { "type": "string", "example": "John Doe" }
                 }
               }
             }
@@ -62,9 +63,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["phone_number", "otp"],
+                "required": ["phoneNumber", "otp"],
                 "properties": {
-                  "phone_number": { "type": "string", "example": "9876543210" },
+                  "phoneNumber": { "type": "string", "example": "9876543210" },
                   "otp": { "type": "string", "example": "123456" },
                   "name": { "type": "string", "example": "John Doe" }
                 }
