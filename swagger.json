@@ -1,0 +1,449 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SmartHome API",
+    "description": "SmartHome Backend API Documentation - NighaTech Global",
+    "version": "1.0.0",
+    "contact": {
+      "name": "NighaTech Global"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://smart-home-backend-silk.vercel.app",
+      "description": "Production Server"
+    },
+    {
+      "url": "http://localhost:3001",
+      "description": "Local Development Server"
+    }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Authentication endpoints" },
+    { "name": "Users", "description": "User management endpoints" },
+    { "name": "Devices", "description": "Device management endpoints" },
+    { "name": "Houses", "description": "House management endpoints" },
+    { "name": "Rooms", "description": "Room management endpoints" },
+    { "name": "Switches", "description": "Switch control endpoints" },
+    { "name": "Technicians", "description": "Technician management endpoints" }
+  ],
+  "paths": {
+    "/v1/auth/send-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Send OTP to phone number",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["phone_number"],
+                "properties": {
+                  "phone_number": { "type": "string", "example": "9876543210" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "OTP sent successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/v1/auth/verify-otp": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Verify OTP and login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["phone_number", "otp"],
+                "properties": {
+                  "phone_number": { "type": "string", "example": "9876543210" },
+                  "otp": { "type": "string", "example": "123456" },
+                  "name": { "type": "string", "example": "John Doe" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "OTP verified, user authenticated" },
+          "400": { "description": "Invalid OTP" }
+        }
+      }
+    },
+    "/v1/users/list/customers": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all customers",
+        "responses": {
+          "200": { "description": "List of customers" }
+        }
+      }
+    },
+    "/v1/users/list/technicians": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all technicians",
+        "responses": {
+          "200": { "description": "List of technicians" }
+        }
+      }
+    },
+    "/v1/users/create/customer": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create a new customer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["phone_number", "full_name"],
+                "properties": {
+                  "phone_number": { "type": "string", "example": "9876543210" },
+                  "full_name": { "type": "string", "example": "John Doe" },
+                  "email": { "type": "string", "example": "john@example.com" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Customer created" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/v1/users/create/admin": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create a new admin",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["phone_number", "full_name"],
+                "properties": {
+                  "phone_number": { "type": "string", "example": "9876543210" },
+                  "full_name": { "type": "string", "example": "Admin User" },
+                  "email": { "type": "string", "example": "admin@example.com" },
+                  "admin_id": { "type": "string", "example": "ADM001" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Admin created" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/v1/devices": {
+      "get": {
+        "tags": ["Devices"],
+        "summary": "Get all devices",
+        "responses": {
+          "200": { "description": "List of devices" }
+        }
+      },
+      "post": {
+        "tags": ["Devices"],
+        "summary": "Create a new device",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["device_code"],
+                "properties": {
+                  "device_code": { "type": "string", "example": "DEV001" },
+                  "device_m2m_number": { "type": "string", "example": "M2M001" },
+                  "device_name": { "type": "string", "example": "Living Room Light" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Device created" }
+        }
+      }
+    },
+    "/v1/devices/{id}": {
+      "get": {
+        "tags": ["Devices"],
+        "summary": "Get device by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Device details" },
+          "404": { "description": "Device not found" }
+        }
+      },
+      "put": {
+        "tags": ["Devices"],
+        "summary": "Update device",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "device_name": { "type": "string" },
+                  "is_active": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Device updated" }
+        }
+      },
+      "delete": {
+        "tags": ["Devices"],
+        "summary": "Delete device",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Device deleted" }
+        }
+      }
+    },
+    "/v1/devices/allocate": {
+      "post": {
+        "tags": ["Devices"],
+        "summary": "Allocate device to user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["device_code", "user_id", "room_id", "house_id"],
+                "properties": {
+                  "device_code": { "type": "string", "example": "DEV001" },
+                  "user_id": { "type": "string", "example": "user_id_here" },
+                  "user_name": { "type": "string", "example": "John Doe" },
+                  "device_name": { "type": "string", "example": "TV" },
+                  "room_id": { "type": "string", "example": "room_id_here" },
+                  "house_id": { "type": "string", "example": "house_id_here" },
+                  "electronic_object": { "type": "string", "example": "Smart TV" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Device allocated successfully" },
+          "400": { "description": "Bad request" }
+        }
+      }
+    },
+    "/v1/devices/user/{userId}": {
+      "get": {
+        "tags": ["Devices"],
+        "summary": "Get devices by user ID",
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "List of user's devices" }
+        }
+      }
+    },
+    "/v1/houses": {
+      "get": {
+        "tags": ["Houses"],
+        "summary": "Get all houses",
+        "responses": {
+          "200": { "description": "List of houses" }
+        }
+      },
+      "post": {
+        "tags": ["Houses"],
+        "summary": "Create a new house",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user_id", "house_name"],
+                "properties": {
+                  "user_id": { "type": "string" },
+                  "house_name": { "type": "string", "example": "Primary Home" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "House created" }
+        }
+      }
+    },
+    "/v1/houses/user/{userId}": {
+      "get": {
+        "tags": ["Houses"],
+        "summary": "Get houses by user ID",
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "List of user's houses" }
+        }
+      }
+    },
+    "/v1/rooms": {
+      "post": {
+        "tags": ["Rooms"],
+        "summary": "Create a new room",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["house_id", "room_name"],
+                "properties": {
+                  "house_id": { "type": "string" },
+                  "room_name": { "type": "string", "example": "Living Room" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Room created" }
+        }
+      }
+    },
+    "/v1/rooms/house/{houseId}": {
+      "get": {
+        "tags": ["Rooms"],
+        "summary": "Get rooms by house ID",
+        "parameters": [
+          { "name": "houseId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "List of rooms" }
+        }
+      }
+    },
+    "/v1/switches": {
+      "get": {
+        "tags": ["Switches"],
+        "summary": "Get all switches",
+        "responses": {
+          "200": { "description": "List of switches" }
+        }
+      }
+    },
+    "/v1/switches/user/{userId}": {
+      "get": {
+        "tags": ["Switches"],
+        "summary": "Get switches by user ID",
+        "parameters": [
+          { "name": "userId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "List of user's switches" }
+        }
+      }
+    },
+    "/v1/switches/{id}/toggle": {
+      "post": {
+        "tags": ["Switches"],
+        "summary": "Toggle switch state",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Switch toggled" }
+        }
+      }
+    },
+    "/v1/technicians": {
+      "get": {
+        "tags": ["Technicians"],
+        "summary": "Get all technicians",
+        "responses": {
+          "200": { "description": "List of technicians" }
+        }
+      },
+      "post": {
+        "tags": ["Technicians"],
+        "summary": "Create a new technician",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["phone_number", "full_name"],
+                "properties": {
+                  "phone_number": { "type": "string", "example": "9876543210" },
+                  "full_name": { "type": "string", "example": "Tech User" },
+                  "email": { "type": "string", "example": "tech@example.com" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Technician created" }
+        }
+      }
+    },
+    "/v1/technicians/{id}": {
+      "get": {
+        "tags": ["Technicians"],
+        "summary": "Get technician by ID",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Technician details" }
+        }
+      },
+      "put": {
+        "tags": ["Technicians"],
+        "summary": "Update technician",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Technician updated" }
+        }
+      },
+      "delete": {
+        "tags": ["Technicians"],
+        "summary": "Delete technician",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Technician deleted" }
+        }
+      }
+    }
+  }
+}
